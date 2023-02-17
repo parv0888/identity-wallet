@@ -1,0 +1,30 @@
+services:
+  node:
+    # image: concordium/testnet-node:latest
+    build:
+      dockerfile: node.Dockerfile
+      context: ./genesis
+    pull_policy: always
+    ports:
+      - ${CONCORDIUM_NODE_PORT}:${CONCORDIUM_NODE_PORT}
+      - ${CONCORDIUM_NODE_GRPC2_LISTEN_PORT}:${CONCORDIUM_NODE_GRPC2_LISTEN_PORT}
+    working_dir: /
+    environment:
+      CONCORDIUM_NODE_CONSENSUS_GENESIS_DATA_FILE: /identity-testnet-genesis.dat
+      CONCORDIUM_NODE_BAKER_CREDENTIALS_FILE: /baker-0-credentials.json
+
+      ## Refer https://github.com/Concordium/concordium-node/blob/main/VARIABLES.md#grpc
+      CONCORDIUM_NODE_GRPC2_LISTEN_ADDRESS: 0.0.0.0
+      CONCORDIUM_NODE_GRPC2_LISTEN_PORT: ${CONCORDIUM_NODE_GRPC2_LISTEN_PORT}
+      CONCORDIUM_NODE_RPC_SERVER_ADDR: 0.0.0.0
+      CONCORDIUM_NODE_RPC_SERVER_PORT: ${CONCORDIUM_NODE_PORT}
+      CONCORDIUM_NODE_LISTEN_ADDRESS: 0.0.0.0
+      CONCORDIUM_NODE_CONFIG_DIR: "/node/concordium-node-data"
+      CONCORDIUM_NODE_DATA_DIR: "/node/concordium-node-config"
+      CONCORDIUM_NODE_CONNECTION_BOOTSTRAP_NODES:
+    volumes:
+      - ./containers-running-data/node/data:/node/concordium-node-data
+      - ./containers-running-data/node/config:/node/concordium-node-config
+    entrypoint:
+      - ./concordium-node
+    command: [ "--no-bootstrap=", "--debug=" ]
