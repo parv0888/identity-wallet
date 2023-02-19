@@ -1,3 +1,18 @@
 [submodule "deps/concordium-misc-tools"]
 	path = deps/concordium-misc-tools
 	url = git@github.com:Concordium/concordium-misc-tools.git
+[submodule "deps/concordium-browser-wallet"]
+	path = deps/concordium-browser-wallet
+	url = git@github.com:parv0888/concordium-browser-wallet.git
+[submodule "deps/concordium-base"]
+	path = deps/concordium-base
+	url = git@github.com:parv0888/concordium-base.git
+[submodule "deps/concordium-wallet-proxy"]
+	path = deps/concordium-wallet-proxy
+	url = git@github.com:Concordium/concordium-wallet-proxy.git
+[submodule "deps/concordium-json-rpc"]
+	path = deps/concordium-json-rpc
+	url = git@github.com:Concordium/concordium-json-rpc.git
+[submodule "deps/concordium-scan"]
+	path = deps/concordium-scan
+	url = git@github.com:Concordium/concordium-scan.git

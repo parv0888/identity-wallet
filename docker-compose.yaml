@@ -1,17 +1,14 @@
 services:
   node:
-    # image: concordium/testnet-node:latest
-    build:
-      dockerfile: node.Dockerfile
-      context: ./genesis
+    image: concordium/testnet-node:latest
     pull_policy: always
     ports:
       - ${CONCORDIUM_NODE_PORT}:${CONCORDIUM_NODE_PORT}
       - ${CONCORDIUM_NODE_GRPC2_LISTEN_PORT}:${CONCORDIUM_NODE_GRPC2_LISTEN_PORT}
     working_dir: /
     environment:
-      CONCORDIUM_NODE_CONSENSUS_GENESIS_DATA_FILE: /identity-testnet-genesis.dat
-      CONCORDIUM_NODE_BAKER_CREDENTIALS_FILE: /baker-0-credentials.json
+      CONCORDIUM_NODE_CONSENSUS_GENESIS_DATA_FILE: /genesis-files/genesis.dat
+      CONCORDIUM_NODE_BAKER_CREDENTIALS_FILE: /genesis-files/bakers-out/baker-0-credentials.json
 
       ## Refer https://github.com/Concordium/concordium-node/blob/main/VARIABLES.md#grpc
       CONCORDIUM_NODE_GRPC2_LISTEN_ADDRESS: 0.0.0.0
@@ -25,6 +22,117 @@ services:
     volumes:
       - ./containers-running-data/node/data:/node/concordium-node-data
       - ./containers-running-data/node/config:/node/concordium-node-config
+      - ./genesis/identity-testnet-files:/genesis-files:ro
     entrypoint:
       - ./concordium-node
-    command: [ "--no-bootstrap=", "--debug=" ]
+    command: ["--no-bootstrap=", "--debug="]
+  wallet-proxy-db:
+    image: postgres:latest
+    restart: always
+    environment:
+      POSTGRES_USER: wallet
+      POSTGRES_PASSWORD: password
+      POSTGRES_DB: wallet
+      PGDATA: /postgresql/data
+    volumes:
+      - ./containers-running-data/wallet-proxy-db/data:/postgresql/data
+    ports:
+      - 5432:5432
+  wallet-proxy:
+    restart: always
+    image: concordium/wallet-proxy:0.25.1-0
+    ports:
+      - 3000:3000
+    environment:
+      GRPC_HOST: node
+      GRPC_PORT: ${CONCORDIUM_NODE_PORT}
+      DB_HOST: wallet-proxy-db 
+      DB_PORT: 5432
+      DB_USER: wallet
+      DB_NAME: wallet
+      DB_PASSWORD: password
+      IP_DATA_FILE: /genesis-files/idps-out/wallet-proxy-ip-data-v1.json
+      IP_DATA_FILE_V1: /genesis-files/idps-out/wallet-proxy-ip-data-v1.json
+    volumes:
+      - ./genesis/identity-testnet-files:/genesis-files:ro
+    depends_on:
+      - wallet-proxy-db
+      - node
+  identity-verifier:
+    build:
+      context: ./deps/concordium-base
+      dockerfile: scripts/identity-provider-service.Dockerfile
+      args:
+        - base_image_tag=latest
+    environment:
+      MODE: identity-verifier
+      IDENTITY_VERIFIER_PORT: 7012
+      IDENTITY_PROVIDER_URL: http://localhost:7011
+      IDENTITY_PROVIDER_PUBLIC: /genesis-files/idps-out/ip-data-0.pub.json
+    ports:
+      - "7012:7012"
+    volumes:
+      - ./genesis/identity-testnet-files:/genesis-files:ro
+  identity-provider-service:
+    build:
+      context: ./deps/concordium-base
+      dockerfile: scripts/identity-provider-service.Dockerfile
+      args:
+        - base_image_tag=latest
+    environment:
+      MODE: identity-provider-service
+      IDENTITY_PROVIDER_SERVICE_PORT: 7011
+      ANONYMITY_REVOKERS: /genesis-files/ars-out/anonymity-revokers.json
+      IDENTITY_PROVIDER: /genesis-files/idps-out/ip-data-0.json
+      GLOBAL_CONTEXT: /genesis-files/global/cryptographic-parameters.json
+      ## Whats this?
+      # RETRIEVE_BASE: https://id-service.eu.staging.concordium.com
+      RETRIEVE_BASE: http://localhost:7011
+      ID_VERIFICATION_URL: http://localhost:7012/api/verify
+      ID_VERIFICATION_QUERY_URL: http://identity-verifier:7012/api/verify
+      WALLET_PROXY_BASE: http://wallet-proxy
+    ports:
+      - "7011:7011"
+    depends_on:
+      - identity-verifier
+    volumes:
+      - ./genesis/identity-testnet-files:/genesis-files:ro
+  node-json-rpc:
+    build:
+      context: ./deps/concordium-json-rpc
+    environment:
+      ENV_NODE: production
+      PORT: 9900
+      NODE_ADDRESS: node
+      NODE_PORT: ${CONCORDIUM_NODE_PORT}
+    ports:
+      - 9900:9900
+    depends_on:
+      - node
+  timescaledb:
+    image: timescale/timescaledb:latest-pg14
+    expose:
+      - 5432
+    ports:
+      - 5433:5432
+    environment:
+      - POSTGRES_PASSWORD=password
+    volumes:
+      - ./containers-running-data/ccdscan/db:/var/lib/postgresql/data
+  explorer-backend:
+    build: ./deps/concordium-scan/backend
+    ports:
+      - 5000:5000
+    environment:
+      - ImportValidation__Enabled=false
+      - ConcordiumNodeGrpc__AuthenticationToken=rpcadmin
+      - ConcordiumNodeGrpc__Address=http://node:${CONCORDIUM_NODE_PORT}
+      - PostgresDatabase__ConnectionString=Host=timescaledb;Port=5432;Database=ccscan;User ID=postgres;Password=password;Include Error Detail=true;
+      - PostgresDatabase__ConnectionStringNodeCache=Host=timescaledb;Port=5432;Database=ccscan_node_cache;User ID=postgres;Password=password;Include Error Detail=true;
+      - FeatureFlags__ConcordiumNodeImportEnabled=true
+      - FeatureFlags__MigrateDatabasesAtStartup=true
+      - NodeCollectorService__Address=https://dashboard.${CCDSCAN_DOMAIN-testnet.concordium.com}/nodesSummary
+    depends_on:
+      - timescaledb
+      - node
+    restart: unless-stopped # it seems like startup sometimes fails because the DB isn't ready yet
