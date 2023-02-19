@@ -13,9 +13,11 @@
   ```
   *Change Url of the Identity Provider to have localhost as the Url so its easier to debug*
   ```bash
-  docker-compose build node
-  docker-compose up node
+  docker-compose build
+  docker-compose up
   ```
+  * Change the genesis hash in the [browser wallet](./deps/concordium-browser-wallet/packages/browser-wallet/src/shared/constants/networkConfiguration.ts)
+
   - //TODO: Should we change leadershipElectionNonce in `genesis4.toml`? What does it mean?
   - //TODO: Create a genesis-assemble file for artifacts created from `genesis4.toml`.
 
