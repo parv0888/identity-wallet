@@ -17,7 +17,7 @@ docker build -t generate-test-ip .
 ### Example run command
 
 ```shell
-docker run -e GENESIS_STRING="Concordium Testnet IP Test" -v "$PWD:/work" generate-test-ip
+docker run -e GENESIS_STRING="Identity Test genesis parameters." -v "$PWD:/work" generate-test-ip
 ```
 
 The files are created with owner `root` so one might want to update their ownership:
