@@ -1,0 +1,66 @@
+<html>
+
+<head>
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+	<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.3.0/css/bootstrap.min.css">
+	<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css">
+
+	<title>{% block title %}TwitterAuthDjango{% endblock %}</title>
+	<style>
+		body {
+			font-family: georgia;
+		}
+
+		#container {
+			width: 50%;
+			margin-top: 2em;
+			margin-left: auto;
+			margin-right: auto;
+		}
+	</style>
+	{% block head %}
+	{% endblock %}
+</head>
+</head>
+
+<body>
+	<nav class="navbar navbar-expand-lg navbar-light bg-light shadow-lg">
+		<a class="navbar-brand" href="/">Tweepy-assignment</a>
+		<button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent"
+			aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+			<span class="navbar-toggler-icon"></span>
+		</button>
+		
+		<div class="collapse navbar-collapse" id="navbarSupportedContent">
+			<ul class="navbar-nav ml-auto">
+				<li class="nav-item">
+					<a href="https://tds-1.github.io/" class="btn btn-info">&nbsp; About me</a>
+				</li>
+			</ul>
+		</div>
+		<div class="collapse navbar-collapse" id="navbarSupportedContent">
+			<ul class="navbar-nav ml-auto">
+				{% if username|length == 0 %}
+				<li class="nav-item">
+					<a href="/auth/" class="btn btn-info"><i class="fa fa-twitter"></i>&nbsp; Sign in with Twitter</a>
+				</li>
+				{% else %}
+				<li class="nav-item">
+					Hi, {{username}} (<a href="/logout/" title="logout">logout</a>)
+				</li>
+				{% endif %}
+			</ul>
+		</div>
+	</nav>
+
+
+	<div class="container">
+		<!--Navbar -->
+		<!-- Image and text -->
+		<!--/.Navbar -->
+		{% block content %}
+		{% endblock %}
+	</div>
+</body>
+
+</html>

@@ -1,0 +1,42 @@
+<!doctype html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <title>Twitter Client</title>
+    <link href='https://fonts.googleapis.com/css?family=Quicksand:300,400' rel='stylesheet' type='text/css'>
+    <link href='https://fonts.googleapis.com/css?family=Lato:400,300' rel='stylesheet' type='text/css'>
+    <link href="https://netdna.bootstrapcdn.com/font-awesome/3.1.1/css/font-awesome.css" rel="stylesheet">
+    <link rel="stylesheet" type="text/css" href="/static/css/tweets.css">
+    <link rel="stylesheet" type="text/css" href="/static/css/achievements.css">
+
+</head>
+
+<body>
+    {% extends "twitter_auth/base.html" %}
+
+    {% block content %}
+    <ul class="timeline">
+        {% for tweet in public_tweets %}
+
+        <li style="list-style-type:none">
+            <div class="avatar">
+                <img src="{{tweet.profile_image}}">
+            </div>
+            <div class="bubble-container">
+                <div class="bubble">
+                    <p>{{ tweet.text }}</p>
+                </div>
+
+                <div class="arrow"></div>
+            </div>
+        </li>
+        {% endfor %}
+
+    </ul>
+    {% endblock %}
+
+    </div>
+</body>
+
+</html>

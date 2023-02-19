@@ -1,0 +1,92 @@
+{% extends "twitter_auth/base.html" %}
+{% block head %}
+<style>
+	.card-img-top {
+		height: 100%;
+	}
+
+	.zoom {
+		transition: transform .2s;
+	}
+
+	.zoom:hover {
+		transform: scale(1.3);
+		z-index: 10;
+	}
+</style>
+<link href='https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css' rel='stylesheet'>
+<link rel="stylesheet" type="text/css" href="/static/css/achievements.css">
+{% endblock %}
+
+{% block content %}
+<div class="container   justify-content-center">
+	<div class="panel">
+		<div class="panel-body">
+			<h3 class="heading-boxed">Domain Tweet <span class="sub-heading sub-heading--stacked">Most number of Domain
+					tweeted</span></h3>
+		</div>
+	</div>
+	<br>
+	<br>
+	<div class="row justify-content-center">
+		<div class="col-auto">
+			<div class="card shadow-lg text-center zoom">
+				<div class="card-header mt-3 ">
+					<div class="row justify-content-end cover">
+						<div class="col-6">
+							<img class="rounded-circle ml-sm-3 mt-3" src="/static/media/rank1.png" width="100" height="100">
+						</div>
+						<div class="col-4">
+						</div>
+					</div>
+				</div>
+				<div class="card-body">
+					<h2 class="font-weight-bold mb-3 text-center mt-1 mb-4">{{query.0}}
+					</h2>
+					<div class="Developer"><mark> Tweet count: {{count.0}}</mark></div>
+						
+				</div>
+			</div>
+		</div>
+		<div class="col-auto">
+			<div class="card shadow-lg text-center zoom">
+				<div class="card-header mt-3 ">
+					<div class="row justify-content-end cover">
+						<div class="col-6">
+							<img class="rounded-circle ml-sm-3 mt-3" src="/static/media/rank2.png" width="100" height="100">
+						</div>
+						<div class="col-4">
+						</div>
+					</div>
+				</div>
+				<div class="card-body">
+					<h2 class="font-weight-bold mb-3 text-center mt-1 mb-4">{{query.1}}
+					</h2>
+					<div class="Developer"><mark> Tweet count: {{count.1}}</mark></div>
+
+				</div>
+			</div>
+		</div>
+		<div class="col-auto">
+			<div class="card shadow-lg text-center zoom">
+				<div class="card-header mt-3 ">
+					<div class="row justify-content-end cover">
+						<div class="col-6">
+							<img class="rounded-circle ml-sm-3 mt-3" src="/static/media/rank3.png" width="100" height="100">
+						</div>
+						<div class="col-4">
+						</div>
+					</div>
+				</div>
+				<div class="card-body">
+					<h2 class="font-weight-bold mb-3 text-center mt-1 mb-4">{{query.2}}
+					</h2>
+					<div class="Developer"><mark> Tweet count: {{count.2}}</mark></div>
+
+				</div>
+			</div>
+		</div>
+
+	</div>
+</div>
+{% endblock %}

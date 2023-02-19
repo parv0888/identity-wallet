@@ -1,0 +1,49 @@
+{% extends "twitter_auth/base.html" %}
+{% block head %}
+<style>
+	.card-img-top {
+		height: 100%;
+	}
+
+	.card-img-top {
+		max-height: 280px;
+	}
+</style>
+<link rel="stylesheet" type="text/css" href="/static/css/achievements.css">
+
+{% endblock %}
+
+{% block content %}
+
+<div class="row" style="padding: 10px;">
+	<div class="card col-5" style="width: 18rem;">
+		<img class="card-img-top" src="/static/media/twitter.png" alt="Card image cap">
+		<div class="card-body">
+			<a href="/home_timeline" class="btn btn-primary">Fetch Your Tweets</a>
+		</div>
+	</div>
+	<div class="col-2"></div>
+	<div class="card col-5" style="width: 18rem;">
+		<img class="card-img-top" src="/static/media/twitter-2.png" alt="Card image cap">
+		<div class="card-body">
+			<a href="/view_tweets" class="btn btn-primary">View all tweet Timeline</a>
+		</div>
+	</div>
+</div>
+<hr>	
+<div class="row" style="padding: 10px;">
+	<div class="card col-5" style="width: 18rem;">
+		<img class="card-img-top" src="/static/media/twitter-3.jpg" alt="Card image cap">
+		<div class="card-body">
+			<a href="/achievements_profile" class="btn btn-primary">Top profile</a>
+		</div>
+	</div>
+	<div class="col-2"></div>
+	<div class="card col-5" style="width: 18rem;">
+		<img class="card-img-top" src="/static/media/twitter-4.jpeg" alt="Card image cap">
+		<div class="card-body">
+			<a href="/achievements_domain" class="btn btn-primary">Top Domains</a>
+		</div>
+	</div>
+</div>
+{% endblock %}
