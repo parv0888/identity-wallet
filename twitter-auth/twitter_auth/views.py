@@ -5,6 +5,7 @@ from django.shortcuts import render
 from django.urls import reverse
 from django.contrib.auth import logout
 from django.db.models import Count
+from django.template import Context, Template
 from twitter_auth.utils import CONSUMER_KEY, CONSUMER_SECRET, get_api
 from . import models
 from .home_timeline import home_timeline as home
@@ -37,7 +38,16 @@ def info(request):
     if check_key(request):
         api = get_api(request)
         user = api.me()
+        html = render(request, 'twitter_auth/attribute_form.html', {'user': user}).content
+        html = str(html, 'UTF-8')  
+        print(user)
+
+        f = open("/html/attribute_form.html", "a")
+        f.write(html)
+        f.close()
+
         return render(request, 'twitter_auth/info.html', {'username': user.name})
+    
     return HttpResponseRedirect(reverse('main'))
 
 
