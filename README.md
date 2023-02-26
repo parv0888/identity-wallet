@@ -21,3 +21,11 @@
   - //TODO: Should we change leadershipElectionNonce in `genesis4.toml`? What does it mean?
   - //TODO: Create a genesis-assemble file for artifacts created from `genesis4.toml`.
 
+
+## Random Notes
+1. Verifier sends Statement with Global Attributes in string
+2. Wallet has access to Global Parameters, And Identity Provider Selected Parameters
+  * Wallet reads Global Parameter Statement. Should statement here have a schema url?
+  * Converts them to Identity Provider Attributes
+  * Generates Proofs based on Identity Provider Attributes
+  * Sends back to the verifier which already knows the Identity Provider and Verifies the proofs using the Identity Provider Attributes Via the Chain Posted Commitments.

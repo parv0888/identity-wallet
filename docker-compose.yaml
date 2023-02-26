@@ -46,7 +46,7 @@ services:
     environment:
       GRPC_HOST: node
       GRPC_PORT: ${CONCORDIUM_NODE_PORT}
-      DB_HOST: wallet-proxy-db 
+      DB_HOST: wallet-proxy-db
       DB_PORT: 5432
       DB_USER: wallet
       DB_NAME: wallet
@@ -136,3 +136,29 @@ services:
       - timescaledb
       - node
     restart: unless-stopped # it seems like startup sometimes fails because the DB isn't ready yet
+  verifier:
+    build:
+      context: ./deps/concordium-misc-tools
+      dockerfile: id-verifier.Dockerfile
+    environment:
+      NODE_ENDPOINT: http://node:${CONCORDIUM_NODE_GRPC2_LISTEN_PORT}
+      PORT: 8100
+      LOG_LEVEL: debug
+      FRONTEND_DIR: /app/frontend
+    entrypoint: /app/id-verifier
+    command:
+      [
+        "--node",
+        "http://node:${CONCORDIUM_NODE_GRPC2_LISTEN_PORT}",
+        "--log-level",
+        "debug",
+        "--dir",
+        "/app/frontend",
+        "--port",
+        "8100",
+      ]
+    ports:
+      - 8100:8100
+    depends_on:
+      - node
+    restart: always
